@@ -30,15 +30,13 @@ import { TopbarContainer } from '../../containers';
 import {
   acceptSale,
   declineSale,
-  loadData,
-  setInitialValues,
   sendMessage,
   sendReview,
   fetchMoreMessages,
   fetchTimeSlots,
   fetchTransactionLineItems,
 } from './TransactionPage.duck';
-import css from './TransactionPage.css';
+import css from './TransactionPage.module.css';
 
 const PROVIDER = 'provider';
 const CUSTOMER = 'customer';
@@ -439,8 +437,5 @@ const TransactionPage = compose(
   ),
   injectIntl
 )(TransactionPageComponent);
-
-TransactionPage.loadData = loadData;
-TransactionPage.setInitialValues = setInitialValues;
 
 export default TransactionPage;

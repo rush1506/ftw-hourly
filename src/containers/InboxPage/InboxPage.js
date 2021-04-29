@@ -39,8 +39,7 @@ import {
 import { TopbarContainer, NotFoundPage } from '../../containers';
 import config from '../../config';
 
-import { loadData } from './InboxPage.duck';
-import css from './InboxPage.css';
+import css from './InboxPage.module.css';
 
 const formatDate = (intl, date) => {
   return {
@@ -476,7 +475,5 @@ const InboxPage = compose(
   connect(mapStateToProps),
   injectIntl
 )(InboxPageComponent);
-
-InboxPage.loadData = loadData;
 
 export default InboxPage;

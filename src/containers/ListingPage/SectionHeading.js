@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage } from '../../util/reactIntl';
 import { InlineTextButton } from '../../components';
 
-import css from './ListingPage.css';
+import css from './ListingPage.module.css';
 
 const getCertificateInfo = (certificateOptions, key) => {
   return certificateOptions.find(c => c.key === key);
@@ -28,7 +28,11 @@ const SectionHeading = props => {
           {showContactUser ? (
             <span className={css.contactWrapper}>
               {showCertificate ? <span className={css.separator}>•</span> : null}
-              <InlineTextButton rootClassName={css.contactLink} onClick={onContactUser}>
+              <InlineTextButton
+                rootClassName={css.contactLink}
+                onClick={onContactUser}
+                enforcePagePreloadFor="SignupPage"
+              >
                 <FormattedMessage id="ListingPage.contactUser" />
               </InlineTextButton>
             </span>

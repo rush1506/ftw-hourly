@@ -52,8 +52,11 @@ const enableAvailability = process.env.REACT_APP_AVAILABILITY_ENABLED === 'true'
 
 // A maximum number of days forwards during which a booking can be made.
 // This is limited due to Stripe holding funds up to 90 days from the
-// moment they are charged. Also note that available time slots can only
-// be fetched for 180 days in the future.
+// moment they are charged:
+// https://stripe.com/docs/connect/account-balances#holding-funds
+//
+// See also the API reference for querying time slots:
+// https://www.sharetribe.com/api-reference/marketplace.html#query-time-slots
 const dayCountAvailableForBooking = 90;
 
 // To pass environment variables to the client app in the build
@@ -64,7 +67,10 @@ const sdkClientId = process.env.REACT_APP_SHARETRIBE_SDK_CLIENT_ID;
 const sdkBaseUrl = process.env.REACT_APP_SHARETRIBE_SDK_BASE_URL;
 const sdkTransitVerbose = process.env.REACT_APP_SHARETRIBE_SDK_TRANSIT_VERBOSE === 'true';
 
-const currency = process.env.REACT_APP_SHARETRIBE_MARKETPLACE_CURRENCY;
+// Marketplace currency.
+// It should match one of the currencies listed in currency-config.js
+const currencyConf = process.env.REACT_APP_SHARETRIBE_MARKETPLACE_CURRENCY;
+const currency = currencyConf ? currencyConf.toUpperCase() : currencyConf;
 
 // Currency formatting options.
 // See: https://github.com/yahoo/react-intl/wiki/API#formatnumber
@@ -101,11 +107,14 @@ const siteInstagramPage = null;
 // Facebook page is used in SEO schema (http://schema.org/Organization)
 const siteFacebookPage = 'https://www.facebook.com/Sharetribe/';
 
+// Social logins & SSO
+
+// Note: Facebook app id is also used for tracking:
 // Facebook counts shares with app or page associated by this id
 // Currently it is unset, but you can read more about fb:app_id from
 // https://developers.facebook.com/docs/sharing/webmasters#basic
 // You should create one to track social sharing in Facebook
-const facebookAppId = null;
+const facebookAppId = process.env.REACT_APP_FACEBOOK_APP_ID;
 
 const maps = {
   mapboxAccessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,

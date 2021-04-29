@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { func, object, string } from 'prop-types';
 import classNames from 'classnames';
+import config from '../../config';
 import { intlShape } from '../../util/reactIntl';
 import {
   getStartHours,
@@ -26,9 +27,18 @@ import { FieldDateInput, FieldSelect } from '../../components';
 
 import NextMonthIcon from './NextMonthIcon';
 import PreviousMonthIcon from './PreviousMonthIcon';
-import css from './FieldDateAndTimeInput.css';
+import css from './FieldDateAndTimeInput.module.css';
 
-const MAX_TIME_SLOTS_RANGE = 180;
+// MAX_TIME_SLOTS_RANGE is the maximum number of days forwards during which a booking can be made.
+// This is limited due to Stripe holding funds up to 90 days from the
+// moment they are charged:
+// https://stripe.com/docs/connect/account-balances#holding-funds
+//
+// See also the API reference for querying time slots:
+// https://www.sharetribe.com/api-reference/marketplace.html#query-time-slots
+
+const MAX_TIME_SLOTS_RANGE = config.dayCountAvailableForBooking;
+
 const TODAY = new Date();
 
 const endOfRange = (date, timeZone) => {
@@ -126,10 +136,14 @@ const getAllTimeValues = (
         getTimeSlots(timeSlots, startDate, timeZone)
       );
 
+  // Value selectedStartTime is a string when user has selected it through the form.
+  // That's why we need to convert also the timestamp we use as a default
+  // value to string for consistency. This is expected later when we
+  // want to compare the sartTime and endTime.
   const startTime = selectedStartTime
     ? selectedStartTime
     : startTimes.length > 0 && startTimes[0] && startTimes[0].timestamp
-    ? startTimes[0].timestamp
+    ? startTimes[0].timestamp.toString()
     : null;
 
   const startTimeAsDate = startTime ? timestampToDate(startTime) : null;
@@ -149,8 +163,14 @@ const getAllTimeValues = (
   );
 
   const endTimes = getAvailableEndTimes(intl, timeZone, startTime, endDate, selectedTimeSlot);
+
+  // We need to convert the timestamp we use as a default value
+  // for endTime to string for consistency. This is expected later when we
+  // want to compare the sartTime and endTime.
   const endTime =
-    endTimes.length > 0 && endTimes[0] && endTimes[0].timestamp ? endTimes[0].timestamp : null;
+    endTimes.length > 0 && endTimes[0] && endTimes[0].timestamp
+      ? endTimes[0].timestamp.toString()
+      : null;
 
   return { startTime, endDate, endTime, selectedTimeSlot };
 };

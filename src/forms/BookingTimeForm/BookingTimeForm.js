@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import { array, bool, func, object, string } from 'prop-types';
 import { compose } from 'redux';
 import { Form as FinalForm, FormSpy } from 'react-final-form';
-import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
+import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import { timestampToDate } from '../../util/dates';
 import { propTypes } from '../../util/types';
 import config from '../../config';
-import { IconSpinner, Form, PrimaryButton } from '../../components';
+import { Form, IconSpinner, PrimaryButton } from '../../components';
 import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
 import FieldDateAndTimeInput from './FieldDateAndTimeInput';
 
-import css from './BookingTimeForm.css';
+import css from './BookingTimeForm.module.css';
 
 export class BookingTimeFormComponent extends Component {
   constructor(props) {
@@ -37,7 +37,11 @@ export class BookingTimeFormComponent extends Component {
     const listingId = this.props.listingId;
     const isOwnListing = this.props.isOwnListing;
 
-    if (bookingStartTime && bookingEndTime && !this.props.fetchLineItemsInProgress) {
+    // We expect values bookingStartTime and bookingEndTime to be strings
+    // which is the default case when the value has been selected through the form
+    const isSameTime = bookingStartTime === bookingEndTime;
+
+    if (bookingStartTime && bookingEndTime && !isSameTime && !this.props.fetchLineItemsInProgress) {
       this.props.onFetchTransactionLineItems({
         bookingData: { startDate, endDate },
         listingId,
@@ -162,7 +166,7 @@ export class BookingTimeFormComponent extends Component {
           };
 
           return (
-            <Form onSubmit={handleSubmit} className={classes}>
+            <Form onSubmit={handleSubmit} className={classes} enforcePagePreloadFor="CheckoutPage">
               <FormSpy
                 subscription={{ values: true }}
                 onChange={values => {
